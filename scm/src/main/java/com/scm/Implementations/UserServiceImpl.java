@@ -25,8 +25,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        return user;
+    }
+
+    @Override
     public boolean existsByPhoneNumber(String phoneNumber) {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         return user != null ? true : false;
     }
+
+    @Override
+    public boolean verifyPassword(String password, Long id) {
+        User user = userRepository.findByUserId(id);
+        if(password.equals(user.getPassword())) return true;
+        return false;
+    }
+
+
 }

@@ -1,10 +1,13 @@
 import React from 'react'
 import { useState } from 'react';
 import Alert from '../Alerts/Alert'
+import {useNavigate} from 'react-router-dom';
 
 
 
 function Signup() {
+
+    const navigate = useNavigate();
 
     const [message, setMessage] = useState('');
     const [type, setType] = useState('');
@@ -50,6 +53,10 @@ function Signup() {
             setTimeout(() => {
                 setShowMessage(false);
             }, 3000);
+        }
+
+        if(res.status == 201) {
+            navigate('/login');
         }
 
 

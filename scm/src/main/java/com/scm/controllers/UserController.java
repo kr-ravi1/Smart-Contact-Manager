@@ -15,4 +15,10 @@ public class UserController {
         
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> profile() {
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

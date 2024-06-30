@@ -8,5 +8,9 @@ public interface UserService {
 
     public boolean existsByEmail(String email);
 
+    public User findByEmail(String email);
+
     public boolean existsByPhoneNumber(String phoneNumber);
+
+    public boolean verifyPassword(String password, Long id);
 }
