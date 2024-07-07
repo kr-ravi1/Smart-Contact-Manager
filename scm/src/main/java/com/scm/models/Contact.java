@@ -11,6 +11,10 @@ import java.util.List;
 
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Contact {
 
     @Id
@@ -22,7 +26,9 @@ public class Contact {
     private String address;
     private String picture;
     private String description;
-    private boolean isFavourite = false;
+    private boolean isFav;
+    private String websiteLink;
+    private String linkedInLink;
 
     @ManyToOne
     private User user;

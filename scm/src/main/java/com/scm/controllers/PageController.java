@@ -67,7 +67,6 @@ public class PageController {
         }
 
         messageResponse = new MessageResponse("Login Successful", MessageType.success);
-        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
 }

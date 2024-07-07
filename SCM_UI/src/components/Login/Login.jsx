@@ -40,6 +40,10 @@ function Login() {
             body: JSON.stringify(formData),
         });
 
+        if(response == null) {
+            navigate('/error');
+        }
+
         const res = await response.json();
 
         if(res.message != null) {
@@ -51,13 +55,10 @@ function Login() {
             }, 3000);
         }
 
-        console.log(response.status);
-
         if(response.status === 200) {
-          navigate('/');
+            localStorage.setItem("UserData", JSON.stringify(res));
+            navigate('/user/dashboard');
         }
-
-
     };
 
 

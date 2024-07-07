@@ -41,10 +41,6 @@ function Signup() {
         });
 
         const res = await response.json();
-        // console.log(response);
-        // console.log(res.data);
-        // console.log(res.message);
-        // console.log(res.type);
 
         if(res.message != null) {
             setMessage(res.message);
