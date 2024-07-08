@@ -9,6 +9,7 @@ import com.scm.models.User;
 import com.scm.services.ContactService;
 import com.scm.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,11 +68,15 @@ public class ContactController {
     }
 
     @GetMapping("/view")
-    public ResponseEntity<?> viewContact(@RequestParam String email) {
+    public ResponseEntity<?> viewContact(@RequestParam("email") String email,
+                                         @RequestParam(value="page", defaultValue = "0") int page,
+                                         @RequestParam(value ="size", defaultValue = "5") int size,
+                                         @RequestParam(value = "sortBy", defaultValue = "name") String sortField,
+                                         @RequestParam(value="direction", defaultValue = "asc") String sortDirection) {
 
         System.out.println(email);
         User user = userService.findByEmail(email);
-        List<Contact> contacts = contactService.getByUserId(user.getUserId());
-        return new ResponseEntity<>(contacts, HttpStatus.OK);
+        Page<Contact> pageContacts = contactService.getByUserId(user.getUserId(), page, size, sortField, sortDirection);
+        return new ResponseEntity<>(pageContacts, HttpStatus.OK);
     }
 }

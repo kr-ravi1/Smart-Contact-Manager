@@ -1,11 +1,13 @@
 package com.scm.Implementations;
 
 import com.scm.dao.ContactRepository;
-import com.scm.dao.UserRepository;
 import com.scm.models.Contact;
-import com.scm.models.User;
 import com.scm.services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +35,10 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<Contact> getByUserId(Long id) {
-        return contactRepository.findByUserId(id);
+    public Page<Contact> getByUserId(Long id, int page, int size, String sortBy, String direction) {
+
+        Sort sort = direction.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        var pageable = PageRequest.of(page, size, sort);
+        return contactRepository.findByUserId(id, pageable);
     }
 }

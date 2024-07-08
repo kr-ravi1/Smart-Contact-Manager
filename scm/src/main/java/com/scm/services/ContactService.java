@@ -2,6 +2,8 @@ package com.scm.services;
 
 import com.scm.models.Contact;
 import com.scm.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,5 +15,5 @@ public interface ContactService {
 
     boolean existsByPhoneNumber(String phoneNumber);
 
-    List<Contact> getByUserId(Long id);
+    Page<Contact> getByUserId(Long id, int page, int size, String sortField, String sortDirection);
 }

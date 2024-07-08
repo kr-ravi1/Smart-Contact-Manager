@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 function ContactsView() {
 
   const [data, setData] = useState(null);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
 
@@ -13,7 +14,7 @@ function ContactsView() {
 
       const fetchData = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/user/contact/view?email=${user.email}`, {
+          const response = await fetch(`http://localhost:8080/user/contact/view?email=${user.email}&page=${page}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ function ContactsView() {
       fetchData();
     }
 
-  }, [])
+  }, [page])
 
 
   if (data == null) {
@@ -45,7 +46,8 @@ function ContactsView() {
 
   return (
     <div className=" overflow-x-auto shadow-md sm:rounded-lg p-5">
-      <div className="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900 p-3">
+      <p className='flex justify-center items-center text-lg font-semibold mb-3'>All Contacts</p>
+      <div className="flex items-center justify-start flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-gray-100 dark:bg-gray-900 p-3">
         <div className='mb-1'>
           <div className="flex mb-2">
             <input type="text" id="name" name='name' className="rounded-none rounded-s-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" />
@@ -75,7 +77,7 @@ function ContactsView() {
           </tr>
         </thead>
         <tbody>
-          {data.map(item => (
+          {data.content.map(item => (
             <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
               <th scope="row" className="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                 <div className="flex items-center justify-start ml-10">
@@ -133,14 +135,16 @@ function ContactsView() {
       {/* Pgination */}
       <nav aria-label="Page navigation example">
         <ul className="-space-x-px text-sm flex justify-center">
-          <li>
-            <a href="#" className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+          <li className={`${data.first ? "hidden" : ""}`}>
+            <div onClick={() => setPage(page - 1)} className={`flex cursor-pointer items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}>Previous</div>
           </li>
-          <li>
-            <a href="#" className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-          </li>
-          <li>
-            <a href="#" className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+          {...Array.from({ length: data.totalPages }, (_, i) => i + 1).map(number => (
+            <li>
+              <div onClick={() => setPage(number - 1)} className={`flex cursor-pointer items-center justify-center px-3 h-8 leading-tight text-gray-500  border border-gray-300 hover:bg-gray-100 hover:text-gray-700  dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${number == data.number + 1 ? "bg-blue-400 dark:bg-blue-200" : "bg-white dark:bg-gray-800"}`}>{number}</div>
+            </li>
+          ))}
+          <li className={`${data.last ? "hidden" : ""}`}>
+            <div onClick={() => setPage(page + 1)} className="flex cursor-pointer items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</div>
           </li>
         </ul>
       </nav>
