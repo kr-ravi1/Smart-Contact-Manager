@@ -3,6 +3,7 @@ package com.scm.dto.requests;
 import com.scm.models.User;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @ToString
@@ -15,7 +16,7 @@ public class AddNewContact {
     private String phoneNumber;
     private String email;
     private String address;
-    private String picture;
+    private MultipartFile contactImage;
     private String description;
     private boolean isFav;
     private String websiteLink;

@@ -1,6 +1,7 @@
 package com.scm.controllers;
 
 import com.scm.dto.requests.AddNewContact;
+import com.scm.dto.requests.ExistingUserRequest;
 import com.scm.dto.response.MessageResponse;
 import com.scm.dto.response.MessageType;
 import com.scm.models.Contact;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -40,6 +43,8 @@ public class ContactController {
 
         User user = userService.findByEmail(addNewContact.getUser().getEmail());
 
+        // image process code
+
         Contact contact = new Contact();
         contact.setName(addNewContact.getName());
         contact.setPhoneNumber(addNewContact.getPhoneNumber());
@@ -49,14 +54,24 @@ public class ContactController {
         contact.setFav(addNewContact.isFav());
         contact.setLinkedInLink(addNewContact.getLinkedInLink());
         contact.setWebsiteLink(addNewContact.getWebsiteLink());
+        contact.setPicture("https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg");
         contact.setUser(user);
 
 //        System.out.println(addNewContact.isFav()); // getiing always false don't know why.
 
-        Contact savedContact = contactService.saveContact(contact);
+        contactService.saveContact(contact);
 
         messageResponse = new MessageResponse("Contact added successfully", MessageType.success);
 
         return new ResponseEntity<>(messageResponse, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/view")
+    public ResponseEntity<?> viewContact(@RequestParam String email) {
+
+        System.out.println(email);
+        User user = userService.findByEmail(email);
+        List<Contact> contacts = contactService.getByUserId(user.getUserId());
+        return new ResponseEntity<>(contacts, HttpStatus.OK);
     }
 }

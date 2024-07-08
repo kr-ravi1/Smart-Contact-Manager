@@ -15,10 +15,8 @@ function Login() {
 
 
     const [formData, setFormData] = useState({
-        name: '',
         password: '',
         email: '',
-        phoneNumber: ''
     });
 
     const handleChange = (e) => {

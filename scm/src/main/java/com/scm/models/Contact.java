@@ -1,5 +1,6 @@
 package com.scm.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class Contact {
     private String linkedInLink;
 
     @ManyToOne
+    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "contact" ,cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)

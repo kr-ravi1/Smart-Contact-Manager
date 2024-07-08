@@ -5,6 +5,7 @@ import com.scm.dto.requests.NewUserRequest;
 
 import com.scm.dto.response.MessageResponse;
 import com.scm.dto.response.MessageType;
+import com.scm.dto.response.UserResponse;
 import com.scm.models.User;
 import com.scm.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,14 @@ public class PageController {
             return new ResponseEntity<>(messageResponse, HttpStatus.UNAUTHORIZED);
         }
 
+        UserResponse userResponse = new UserResponse();
+
+        userResponse.setUserId(user.getUserId());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setName(user.getName());
+        userResponse.setPhoneNumber(user.getPhoneNumber());
+
         messageResponse = new MessageResponse("Login Successful", MessageType.success);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 }

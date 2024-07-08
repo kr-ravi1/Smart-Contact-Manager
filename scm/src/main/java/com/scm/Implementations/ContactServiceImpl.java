@@ -8,6 +8,8 @@ import com.scm.services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ContactServiceImpl implements ContactService {
 
@@ -28,5 +30,10 @@ public class ContactServiceImpl implements ContactService {
     public boolean existsByPhoneNumber(String phoneNumber) {
         Contact contact = contactRepository.findByPhoneNumber(phoneNumber);
         return contact != null ? true : false;
+    }
+
+    @Override
+    public List<Contact> getByUserId(Long id) {
+        return contactRepository.findByUserId(id);
     }
 }
