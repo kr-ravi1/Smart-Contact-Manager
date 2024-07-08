@@ -5,6 +5,9 @@ function ContactsView() {
 
   const [data, setData] = useState(null);
   const [page, setPage] = useState(0);
+  const [showDropDown, setShowDropDown] = useState(false);
+  const [field, setField] = useState('name');
+  const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
 
@@ -44,13 +47,66 @@ function ContactsView() {
     )
   }
 
+  const handleSearch = async () => {
+
+    const user = JSON.parse(localStorage.getItem("UserData"));
+
+    if (user && user.email) {
+
+      try {
+        const response = await fetch(`http://localhost:8080/user/contact/search?email=${user.email}&field=${field}&keyword=${keyword}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const res = await response.json();
+        setData(res);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  }
+
   return (
     <div className=" overflow-x-auto shadow-md sm:rounded-lg p-5">
       <p className='flex justify-center items-center text-lg font-semibold mb-3'>All Contacts</p>
-      <div className="flex items-center justify-start flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-gray-100 dark:bg-gray-900 p-3">
+      <div className="flex gap-4 items-center justify-start flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-gray-100 dark:bg-gray-900 p-3">
+
+        <div className="relative">
+          <button onClick={() => setShowDropDown((prev) => !prev)} className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 " type="button">Search By
+            <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+            </svg>
+          </button>
+
+          {/* <!-- Dropdown menu --> */}
+          <div id="dropdown" className={`z-10 ${showDropDown ? "" : "hidden"} absolute bg-white divide-gray-100 rounded-lg shadow w-[125px] dark:bg-gray-700`}>
+            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+            <li onClick={() => {setShowDropDown(false); setPage("0")}} >
+                <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">All Contacts</a>
+              </li>
+              <li onClick={() => { setShowDropDown(false); setField('name') }} >
+                <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Name</a>
+              </li>
+              <li onClick={() => { setShowDropDown(false); setField('phone') }}>
+                <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Phone</a>
+              </li>
+              <li onClick={() => { setShowDropDown(false); setField('email') }}>
+                <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Email</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
         <div className='mb-1'>
-          <div className="flex mb-2">
-            <input type="text" id="name" name='name' className="rounded-none rounded-s-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" />
+          <div onClick={() => handleSearch()} className="flex">
+            <input type="text" id="search" name='keyword' value={keyword} onChange={(e) => setKeyword(e.target.value)} className="rounded-none rounded-s-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" />
             <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-e-lg dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
               <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
@@ -59,6 +115,7 @@ function ContactsView() {
           </div>
         </div>
       </div>
+
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mb-4">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
           <tr>
@@ -131,7 +188,7 @@ function ContactsView() {
         </tbody>
       </table>
 
-
+      {/* Pagination does not work correctly in case of searching */}
       {/* Pgination */}
       <nav aria-label="Page navigation example">
         <ul className="-space-x-px text-sm flex justify-center">

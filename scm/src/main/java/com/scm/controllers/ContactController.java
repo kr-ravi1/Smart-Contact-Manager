@@ -10,6 +10,8 @@ import com.scm.services.ContactService;
 import com.scm.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,5 +80,30 @@ public class ContactController {
         User user = userService.findByEmail(email);
         Page<Contact> pageContacts = contactService.getByUserId(user.getUserId(), page, size, sortField, sortDirection);
         return new ResponseEntity<>(pageContacts, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchHandler(@RequestParam("email") String email,
+                                    @RequestParam("field") String field,
+                                    @RequestParam(value="page", defaultValue = "0") int page,
+                                    @RequestParam(value ="size", defaultValue = "5") int size,
+                                    @RequestParam(value = "sortBy", defaultValue = "name") String sortField,
+                                    @RequestParam(value="direction", defaultValue = "asc") String sortDirection,
+                                    @RequestParam("keyword") String keyword) {
+
+        User user = userService.findByEmail(email);
+
+        Page<Contact> contactPage = null;
+        if(field.equalsIgnoreCase("name")) {
+             contactPage = contactService.searchByName(user.getUserId(), keyword, page, size, sortField, sortDirection);
+        }
+        else if(field.equalsIgnoreCase("email")) {
+            contactPage = contactService.searchByEmail(user.getUserId(), keyword, page, size, sortField, sortDirection);
+        }
+        else if(field.equalsIgnoreCase("phone")) {
+            contactPage = contactService.searchByPhone(user.getUserId(), keyword, page, size, sortField, sortDirection);
+        }
+
+        return new ResponseEntity<>(contactPage, HttpStatus.OK);
     }
 }

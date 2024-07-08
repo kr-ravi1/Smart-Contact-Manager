@@ -16,4 +16,11 @@ public interface ContactService {
     boolean existsByPhoneNumber(String phoneNumber);
 
     Page<Contact> getByUserId(Long id, int page, int size, String sortField, String sortDirection);
+
+    Page<Contact> searchByName(Long id, String nameKeyword, int page, int size, String sortField, String sortDirection);
+
+    Page<Contact> searchByEmail(Long id, String emailKeyword, int page, int size, String sortField, String sortDirection);
+
+    Page<Contact> searchByPhone(Long id, String phoneKeyword, int page, int size, String sortField, String sortDirection);
+
 }
