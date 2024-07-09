@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,38 +70,28 @@ public class ContactController {
         return new ResponseEntity<>(messageResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/view")
-    public ResponseEntity<?> viewContact(@RequestParam("email") String email,
-                                         @RequestParam(value="page", defaultValue = "0") int page,
-                                         @RequestParam(value ="size", defaultValue = "5") int size,
-                                         @RequestParam(value = "sortBy", defaultValue = "name") String sortField,
-                                         @RequestParam(value="direction", defaultValue = "asc") String sortDirection) {
-
-        System.out.println(email);
-        User user = userService.findByEmail(email);
-        Page<Contact> pageContacts = contactService.getByUserId(user.getUserId(), page, size, sortField, sortDirection);
-        return new ResponseEntity<>(pageContacts, HttpStatus.OK);
-    }
-
     @GetMapping("/search")
     public ResponseEntity<?> searchHandler(@RequestParam("email") String email,
-                                    @RequestParam("field") String field,
-                                    @RequestParam(value="page", defaultValue = "0") int page,
-                                    @RequestParam(value ="size", defaultValue = "5") int size,
-                                    @RequestParam(value = "sortBy", defaultValue = "name") String sortField,
-                                    @RequestParam(value="direction", defaultValue = "asc") String sortDirection,
-                                    @RequestParam("keyword") String keyword) {
+                                           @RequestParam(value = "field") String field,
+                                           @RequestParam(value="page", defaultValue = "0") int page,
+                                           @RequestParam(value ="size", defaultValue = "5") int size,
+                                           @RequestParam(value = "sortBy", defaultValue = "name") String sortField,
+                                           @RequestParam(value="direction", defaultValue = "asc") String sortDirection,
+                                           @RequestParam(value = "keyword", required = false) String keyword) {
 
         User user = userService.findByEmail(email);
 
         Page<Contact> contactPage = null;
-        if(field.equalsIgnoreCase("name")) {
-             contactPage = contactService.searchByName(user.getUserId(), keyword, page, size, sortField, sortDirection);
+        if(field.equalsIgnoreCase("all")) {
+            contactPage = contactService.getByUserId(user.getUserId(), page, size, sortField, sortDirection);
         }
-        else if(field.equalsIgnoreCase("email")) {
+        else if(field.equalsIgnoreCase("name") && keyword != null) {
+            contactPage = contactService.searchByName(user.getUserId(), keyword, page, size, sortField, sortDirection);
+        }
+        else if(field.equalsIgnoreCase("email") && keyword != null) {
             contactPage = contactService.searchByEmail(user.getUserId(), keyword, page, size, sortField, sortDirection);
         }
-        else if(field.equalsIgnoreCase("phone")) {
+        else if(field.equalsIgnoreCase("phone") && keyword != null) {
             contactPage = contactService.searchByPhone(user.getUserId(), keyword, page, size, sortField, sortDirection);
         }
 

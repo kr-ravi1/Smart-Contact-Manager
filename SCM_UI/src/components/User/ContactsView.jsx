@@ -6,7 +6,7 @@ function ContactsView() {
   const [data, setData] = useState(null);
   const [page, setPage] = useState(0);
   const [showDropDown, setShowDropDown] = useState(false);
-  const [field, setField] = useState('name');
+  const [field, setField] = useState('All');
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
@@ -17,7 +17,14 @@ function ContactsView() {
 
       const fetchData = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/user/contact/view?email=${user.email}&page=${page}`, {
+
+          let url = `http://localhost:8080/user/contact/search?email=${user.email}&page=${page}&field=${field}`;
+
+          if (keyword !== '') {
+            url += `&keyword=${keyword}`;
+          }
+
+          const response = await fetch(url, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -38,39 +45,12 @@ function ContactsView() {
       fetchData();
     }
 
-  }, [page])
-
+  }, [page, keyword])
 
   if (data == null) {
     return (
       <div>Loading...</div>
     )
-  }
-
-  const handleSearch = async () => {
-
-    const user = JSON.parse(localStorage.getItem("UserData"));
-
-    if (user && user.email) {
-
-      try {
-        const response = await fetch(`http://localhost:8080/user/contact/search?email=${user.email}&field=${field}&keyword=${keyword}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const res = await response.json();
-        setData(res);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
   }
 
   return (
@@ -79,7 +59,8 @@ function ContactsView() {
       <div className="flex gap-4 items-center justify-start flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-gray-100 dark:bg-gray-900 p-3">
 
         <div className="relative">
-          <button onClick={() => setShowDropDown((prev) => !prev)} className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 " type="button">Search By
+          <button onClick={() => setShowDropDown((prev) => !prev)} className="w-28 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 " type="button">
+            <div className='w-28'>{field}</div>
             <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
             </svg>
@@ -88,16 +69,16 @@ function ContactsView() {
           {/* <!-- Dropdown menu --> */}
           <div id="dropdown" className={`z-10 ${showDropDown ? "" : "hidden"} absolute bg-white divide-gray-100 rounded-lg shadow w-[125px] dark:bg-gray-700`}>
             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-            <li onClick={() => {setShowDropDown(false); setPage("0")}} >
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">All Contacts</a>
+              <li onClick={() => { setShowDropDown(false); setPage("0"); setField('All') }} >
+                <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">All</a>
               </li>
-              <li onClick={() => { setShowDropDown(false); setField('name') }} >
+              <li onClick={() => { setShowDropDown(false); setField('Name') }} >
                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Name</a>
               </li>
-              <li onClick={() => { setShowDropDown(false); setField('phone') }}>
+              <li onClick={() => { setShowDropDown(false); setField('Phone') }}>
                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Phone</a>
               </li>
-              <li onClick={() => { setShowDropDown(false); setField('email') }}>
+              <li onClick={() => { setShowDropDown(false); setField('Email') }}>
                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Email</a>
               </li>
             </ul>
@@ -105,7 +86,7 @@ function ContactsView() {
         </div>
 
         <div className='mb-1'>
-          <div onClick={() => handleSearch()} className="flex">
+          <div className="flex">
             <input type="text" id="search" name='keyword' value={keyword} onChange={(e) => setKeyword(e.target.value)} className="rounded-none rounded-s-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" />
             <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-e-lg dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
               <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -114,7 +95,9 @@ function ContactsView() {
             </span>
           </div>
         </div>
+
       </div>
+
 
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mb-4">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
