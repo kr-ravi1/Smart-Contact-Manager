@@ -15,6 +15,7 @@ import ProtectedRoute from './ProtectedRoute'
 import AddContact from './components/User/AddContact'
 import ContactsView from './components/User/ContactsView'
 import Profile from './components/User/Profile'
+import UpdateContact from './components/User/UpdateContact'
 
 
 const router = createBrowserRouter(
@@ -32,9 +33,10 @@ const router = createBrowserRouter(
             <Route element={<ProtectedRoute />}>
                 <Route path='/user/' element={<UserLayout/>}>
                     <Route path='dashboard' element={<Dashboard />}></Route>
-                    <Route path='addContact' element={<AddContact/>}></Route>
-                    <Route path='contacts' element={<ContactsView/>}></Route>
+                    <Route path='contact/add' element={<AddContact/>}></Route>
+                    <Route path='contact/view' element={<ContactsView/>}></Route>
                     <Route path='profile' element={<Profile/>}></Route>
+                    <Route path='contact/update/:id' element={<UpdateContact/>}></Route>
                 </Route>
             </Route>
         </>

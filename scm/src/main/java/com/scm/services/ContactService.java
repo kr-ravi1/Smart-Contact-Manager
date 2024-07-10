@@ -26,4 +26,6 @@ public interface ContactService {
     void deleteById(Long id);
 
     boolean existsById(Long id);
+
+    Contact update(Contact contact);
 }

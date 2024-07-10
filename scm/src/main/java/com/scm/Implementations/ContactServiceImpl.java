@@ -78,4 +78,22 @@ public class ContactServiceImpl implements ContactService {
         return contactRepository.existsById(id);
     }
 
+    @Override
+    public Contact update(Contact contact) {
+
+        var oldContact = contactRepository.findById(contact.getId()).orElseThrow();
+        oldContact.setId(contact.getId());
+        oldContact.setName(contact.getName());
+        oldContact.setPhoneNumber(contact.getPhoneNumber());
+        oldContact.setEmail(contact.getEmail());
+        oldContact.setAddress(contact.getAddress());
+        oldContact.setDescription(contact.getDescription());
+        oldContact.setFav(contact.isFav());
+        oldContact.setLinkedInLink(contact.getLinkedInLink());
+        oldContact.setWebsiteLink(contact.getWebsiteLink());
+        oldContact.setPicture("https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg");
+
+        return contactRepository.save(oldContact);
+    }
+
 }

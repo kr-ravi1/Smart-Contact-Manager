@@ -111,4 +111,23 @@ public class ContactController {
         return new ResponseEntity<>(messageResponse,HttpStatus.OK);
     }
 
+    @PostMapping("/update/{id}")
+    public ResponseEntity<?> updateContact(@PathVariable Long id, @RequestBody AddNewContact updateContact) {
+        Contact contact = new Contact();
+        contact.setId(id);
+        contact.setName(updateContact.getName());
+        contact.setPhoneNumber(updateContact.getPhoneNumber());
+        contact.setEmail(updateContact.getEmail());
+        contact.setAddress(updateContact.getAddress());
+        contact.setDescription(updateContact.getDescription());
+        contact.setFav(updateContact.isFav());
+        contact.setLinkedInLink(updateContact.getLinkedInLink());
+        contact.setWebsiteLink(updateContact.getWebsiteLink());
+        contact.setPicture("https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg");
+
+        contactService.update(contact);
+        messageResponse = new MessageResponse("Contact Updated Successfully", MessageType.success);
+        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+    }
+
 }
