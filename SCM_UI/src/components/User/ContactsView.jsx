@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import Modal from '../Utils/Modal';
+import SweetAlert from '../Utils/SweetAlert';
+import Alert from '../Alerts/Alert';
 
 function ContactsView() {
 
@@ -8,44 +10,61 @@ function ContactsView() {
   const [showDropDown, setShowDropDown] = useState(false);
   const [field, setField] = useState('All');
   const [keyword, setKeyword] = useState('');
+  const [all, setAll] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [contactId, setContactId] = useState();
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [type, setType] = useState(null);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
+    if (!showPopUp) {
+      const user = JSON.parse(localStorage.getItem("UserData"));
 
-    const user = JSON.parse(localStorage.getItem("UserData"));
+      if (user && user.email) {
 
-    if (user && user.email) {
+        const fetchData = async () => {
+          try {
 
-      const fetchData = async () => {
-        try {
+            let url = `http://localhost:8080/user/contact/search?email=${user.email}&page=${page}&field=${field}`;
 
-          let url = `http://localhost:8080/user/contact/search?email=${user.email}&page=${page}&field=${field}`;
+            if (keyword !== '') {
+              url += `&keyword=${keyword}`;
+            }
 
-          if (keyword !== '') {
-            url += `&keyword=${keyword}`;
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const res = await response.json();
+            setData(res);
+          } catch (error) {
+            console.error('Error fetching data:', error);
           }
+        };
 
-          const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const res = await response.json();
-          setData(res);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-
-      fetchData();
+        fetchData();
+      }
     }
 
-  }, [page, keyword])
+  }, [page, keyword, all, type])
+
+  const handleChildData = (res) => {
+    setType(res.type);
+    setMessage(res.message);
+    setTimeout(() => {
+      setType(null);
+    }, 3000)
+  }
+
+
 
   if (data == null) {
     return (
@@ -53,8 +72,9 @@ function ContactsView() {
     )
   }
 
-  return (
-    <div className=" overflow-x-auto shadow-md sm:rounded-lg p-5">
+  return (<>
+    {type != null && <Alert type={type} message={message} />}
+    <div className=" overflow-x-auto shadow-md sm:rounded-lg p-5 min-h-[85vh] ">
       <p className='flex justify-center items-center text-lg font-semibold mb-3'>All Contacts</p>
       <div className="flex gap-4 items-center justify-start flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-gray-100 dark:bg-gray-900 p-3">
 
@@ -69,7 +89,7 @@ function ContactsView() {
           {/* <!-- Dropdown menu --> */}
           <div id="dropdown" className={`z-10 ${showDropDown ? "" : "hidden"} absolute bg-white divide-gray-100 rounded-lg shadow w-[125px] dark:bg-gray-700`}>
             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-              <li onClick={() => { setShowDropDown(false); setPage("0"); setField('All') }} >
+              <li onClick={() => { setShowDropDown(false); setPage("0"); setField('All'); setAll((prev) => prev + 1) }} >
                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">All</a>
               </li>
               <li onClick={() => { setShowDropDown(false); setField('Name') }} >
@@ -148,22 +168,25 @@ function ContactsView() {
               </td>
               <td className="px-6 py-4">
                 <div className="flex items-center justify-center gap-3">
-                  <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                  {/* view */}
+                  <div onClick={() => { setShowModal(true); setContactId(item.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer">
                     <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                       <path fillRule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
                     </svg>
-                  </Link>
-                  <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                  </div>
+                  {/* edit */}
+                  <div className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer">
                     <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                       <path fillRule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clipRule="evenodd" />
                       <path fillRule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clipRule="evenodd" />
                     </svg>
-                  </Link>
-                  <Link to="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                  </div>
+                  {/* delete */}
+                  <div onClick={() => { setShowPopUp(true); setContactId(item.id) }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer">
                     <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                      <path fillRule="evenodd" d="M5 8a4 4 0 1 1 8 0 4 4 0 0 1-8 0Zm-2 9a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1Zm13-6a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-4Z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd" />
                     </svg>
-                  </Link>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -188,7 +211,17 @@ function ContactsView() {
           </li>
         </ul>
       </nav>
+
     </div>
+
+    {showModal && <Modal onClose={() => setShowModal(false)} id={contactId} />}
+    {showPopUp && <SweetAlert
+      onClose={() => setShowPopUp(false)}
+      api={`http://localhost:8080/user/contact/delete/${contactId}`}
+      message='Are you sure to delete the Contact?'
+      sendData={handleChildData}
+    />}
+  </>
 
   )
 }

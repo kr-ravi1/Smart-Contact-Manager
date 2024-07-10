@@ -2,6 +2,7 @@ package com.scm.dao;
 
 import com.scm.models.Contact;
 import com.scm.models.User;
+import jakarta.persistence.Id;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -10,7 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContactServiceImpl implements ContactService {
@@ -61,6 +61,21 @@ public class ContactServiceImpl implements ContactService {
         Sort sort = direction.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         var pageable = PageRequest.of(page, size, sort);
         return contactRepository.findByPhone(id, phoneKeyword, pageable);
+    }
+
+    @Override
+    public Optional<Contact> getContactById(Long id) {
+        return contactRepository.findById(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        contactRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return contactRepository.existsById(id);
     }
 
 }

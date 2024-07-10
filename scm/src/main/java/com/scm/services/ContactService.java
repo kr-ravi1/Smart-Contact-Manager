@@ -1,11 +1,9 @@
 package com.scm.services;
 
 import com.scm.models.Contact;
-import com.scm.models.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface ContactService {
 
@@ -23,4 +21,9 @@ public interface ContactService {
 
     Page<Contact> searchByPhone(Long id, String phoneKeyword, int page, int size, String sortField, String sortDirection);
 
+    Optional<Contact> getContactById(Long id);
+
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
 }

@@ -1,7 +1,6 @@
 package com.scm.controllers;
 
 import com.scm.dto.requests.AddNewContact;
-import com.scm.dto.requests.ExistingUserRequest;
 import com.scm.dto.response.MessageResponse;
 import com.scm.dto.response.MessageType;
 import com.scm.models.Contact;
@@ -10,14 +9,11 @@ import com.scm.services.ContactService;
 import com.scm.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -46,8 +42,6 @@ public class ContactController {
         }
 
         User user = userService.findByEmail(addNewContact.getUser().getEmail());
-
-        // image process code
 
         Contact contact = new Contact();
         contact.setName(addNewContact.getName());
@@ -97,4 +91,24 @@ public class ContactController {
 
         return new ResponseEntity<>(contactPage, HttpStatus.OK);
     }
+
+    @GetMapping("/view/{id}")
+    public ResponseEntity<?> viewContact(@PathVariable Long id) {
+
+        Optional<Contact> contact = contactService.getContactById(id);
+        return new ResponseEntity<>(contact, HttpStatus.OK);
+    }
+
+    @GetMapping("/delete/{id}")
+    public ResponseEntity<?> deleteContact(@PathVariable Long id) {
+
+        if (!contactService.existsById(id)) {
+            messageResponse = new MessageResponse("Contact can not be Deleted", MessageType.warning);
+            return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+        }
+        contactService.deleteById(id);
+        messageResponse = new MessageResponse("Contact Deleted Successfully", MessageType.success);
+        return new ResponseEntity<>(messageResponse,HttpStatus.OK);
+    }
+
 }
