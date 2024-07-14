@@ -1,5 +1,6 @@
 package com.scm.dao;
 
+import com.scm.dto.response.ContactResponse;
 import com.scm.models.Contact;
 import com.scm.models.User;
 import jakarta.persistence.Id;
@@ -31,4 +32,7 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
 
     @Query("SELECT c FROM Contact c JOIN c.user u WHERE u.id = :id AND c.phoneNumber LIKE %:phone%")
     Page<Contact> findByPhone(@Param("id") Long id, @Param("phone") String phone, Pageable pageable);
+
+    @Query("SELECT new com.scm.dto.response.ContactResponse(c.id, c.name, c.email, c.picture) FROM Contact c WHERE c.user.id = :userId ORDER BY c.createdAt DESC")
+    List<ContactResponse> findRecentlyAddedContacts(Long userId, Pageable pageable);
 }

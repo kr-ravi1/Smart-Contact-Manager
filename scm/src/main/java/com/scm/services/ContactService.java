@@ -1,8 +1,10 @@
 package com.scm.services;
 
+import com.scm.dto.response.ContactResponse;
 import com.scm.models.Contact;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ContactService {
@@ -28,4 +30,6 @@ public interface ContactService {
     boolean existsById(Long id);
 
     Contact update(Contact contact);
+
+    public List<ContactResponse> getRecentlyAddedContacts(Long id, int limit);
 }

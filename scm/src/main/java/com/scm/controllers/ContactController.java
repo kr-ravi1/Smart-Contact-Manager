@@ -1,6 +1,7 @@
 package com.scm.controllers;
 
 import com.scm.dto.requests.AddNewContact;
+import com.scm.dto.response.ContactResponse;
 import com.scm.dto.response.MessageResponse;
 import com.scm.dto.response.MessageType;
 import com.scm.models.Contact;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -130,4 +132,10 @@ public class ContactController {
         return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/recent_contacts")
+    public List<ContactResponse> getRecentlyAddedContacts(@RequestParam(defaultValue = "3") int limit,
+                                                          @RequestParam Long id) {
+
+        return contactService.getRecentlyAddedContacts(id, limit);
+    }
 }

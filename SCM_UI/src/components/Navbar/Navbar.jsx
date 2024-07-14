@@ -1,12 +1,20 @@
-import React, { useEffect, } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import useTheme from '../../contexts/Theme';
 
 function Navbar() {
 
     const { lightTheme, darkTheme } = useTheme();
+    const [showButton, setShowButton] = useState(false);
+
 
     useEffect(() => {
+        const user = localStorage.getItem("UserData");
+
+        if (user != null) {
+            setShowButton(true);
+        }
+
         if (localStorage.getItem("theme") === "light") {
             document.getElementById('theme-btn').querySelector('span').textContent = "Dark"
         }
@@ -79,20 +87,23 @@ function Navbar() {
                             <NavLink to="/contact" className={({ isActive }) => `block py-2 px-3 md:p-0 ${isActive ? 'text-blue-700 dark:text-blue-600' : 'text-gray-900  dark:text-white'}  rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700`}>Contact</NavLink>
                         </li>
                         <li>
-                            <NavLink to="/service" className={({ isActive }) => `block py-2 px-3 md:p-0 ${isActive ? 'text-blue-700 dark:text-blue-600' : 'text-gray-900  dark:text-white'}  rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700`}>Service</NavLink>
+                            <NavLink to="/service" className={({ isActive }) => `block py-2 px-3 md:p-0 ${isActive ? 'text-blue-700 dark:text-blue-600' : 'text-gray-900  dark:text-white'}  rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700`}>Services</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/user/dashboard" className={({ isActive }) => `block py-2 px-3 md:p-0 ${isActive ? 'text-blue-700 dark:text-blue-600' : 'text-gray-900  dark:text-white'} ${showButton ? "" : "hidden"} rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700`}>Dashboard</NavLink>
                         </li>
                         <li>
                             <button
                                 type="button"
                                 onClick={handleLogin}
-                                className="block py-2 px-3 md:p-0 rounded md:hidden hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                                className={`block py-2 px-3 md:p-0 rounded md:hidden hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700`}
                             >Login</button>
                         </li>
                         <li>
                             <button
                                 type="button"
                                 onClick={handleSignup}
-                                className="block py-2 px-3 md:p-0 rounded md:hidden hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Signup</button>
+                                className={`block py-2 px-3 md:p-0 rounded md:hidden hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500  dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700`}>Signup</button>
                         </li>
                     </ul>
                 </div>

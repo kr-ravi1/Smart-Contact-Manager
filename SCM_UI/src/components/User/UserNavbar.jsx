@@ -44,7 +44,7 @@ function UserNavbar() {
           </svg>
         </button>
         <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="../public/images/phone.png" className="h-6" alt="scm logo" />
+          <img src="../images/phone.png" className="h-6" alt="scm logo" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SCM</span>
         </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse gap-2">

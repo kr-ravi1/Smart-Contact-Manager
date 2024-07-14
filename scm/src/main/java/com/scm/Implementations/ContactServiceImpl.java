@@ -1,6 +1,7 @@
 package com.scm.Implementations;
 
 import com.scm.dao.ContactRepository;
+import com.scm.dto.response.ContactResponse;
 import com.scm.models.Contact;
 import com.scm.services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -94,6 +96,11 @@ public class ContactServiceImpl implements ContactService {
         oldContact.setPicture("https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg");
 
         return contactRepository.save(oldContact);
+    }
+
+    @Override
+    public List<ContactResponse> getRecentlyAddedContacts(Long id, int limit) {
+        return contactRepository.findRecentlyAddedContacts(id, PageRequest.of(0, limit));
     }
 
 }
