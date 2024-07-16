@@ -56,6 +56,7 @@ function Modal({ onClose, id }) {
                     <p className='text-gray-700 dark:text-gray-200'><strong>Location:</strong> {res.address}</p>
                     <p className='text-gray-700 dark:text-gray-200'><strong>Website:</strong> <a href={res.websiteLink} target='_blank' rel='noopener noreferrer' className='text-blue-600 dark:text-blue-400'>{res.websiteLink}</a></p>
                     <p className='text-gray-700 dark:text-gray-200'><strong>LinkedIn:</strong> <a href={res.linkedInLink} target='_blank' rel='noopener noreferrer' className='text-blue-600 dark:text-blue-400'>{res.linkedInLink}</a></p>
+                    <p className='text-gray-700 dark:text-gray-200'><strong>Added on:</strong> {res.createdAt}</p>
                 </div>
             </div>
             <div className='flex justify-center mt-4'>

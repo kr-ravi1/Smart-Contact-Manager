@@ -139,7 +139,7 @@ function ContactsView() {
         </thead>
         <tbody>
           {data.content.map(item => (
-            <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <tr key={item.id} onClick={() => { setShowModal(true); setContactId(item.id) }} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
               <th scope="row" className="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                 <div className="flex items-center justify-start ml-10">
                   <img className="w-10 h-10 rounded-full" src={item.picture} alt={item.name} />

@@ -63,9 +63,9 @@ function Login() {
     return (
         <div id="content">
             {showMessage && (<Alert message={message} type={type}/>)}
-            <div className="grid grid-cols-12 mt-4">
+            <div className="grid grid-cols-12 min-h-[80vh]">
                 <div className="col-span-4 md:col-span-2 lg:col-span-3 xl:col-span-4"></div>
-                <div className="col-span-12 md:col-span-8 lg:col-span-6 xl:col-span-4">
+                <div className="col-span-12 md:col-span-8 lg:col-span-6 xl:col-span-4 pt-10">
                     <div
                         className="block p-6 border-t-[7px] border-green-700 bg-white rounded-xl shadow dark:bg-gray-800 dark:border-blue-700">
                         <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">

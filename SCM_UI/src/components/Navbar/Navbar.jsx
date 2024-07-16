@@ -45,6 +45,12 @@ function Navbar() {
         navigate('/signup')
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem("UserData");
+        setShowButton(false);
+        navigate('/login');
+    }
+
     return (
         <nav className='bg-gray-50 border-gray-200 dark:bg-gray-800'>
             <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
@@ -56,12 +62,16 @@ function Navbar() {
                     <button
                         type="button"
                         onClick={handleLogin}
-                        className="hidden md:flex text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700"
+                        className={`${showButton ? "hidden" : "hidden md:flex"}  text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700`}
                     >Login</button>
                     <button
                         type="button"
                         onClick={handleSignup}
-                        className="hidden md:flex text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Signup</button>
+                        className={`${showButton ? "hidden" : "hidden md:flex"}  text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700`}>Signup</button>
+                    <button
+                        type="button"
+                        onClick={handleLogout}
+                        className={`${showButton ? "hidden md:flex" : "hidden"}  text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700`}>Logout</button>
                     <button
                         id='theme-btn'
                         type="button"
