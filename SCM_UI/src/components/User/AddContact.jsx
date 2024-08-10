@@ -17,16 +17,28 @@ function AddContact() {
         description: '',
         websiteLink: '',
         linkedInLink: '',
-        isFav: false,
+        fav: false,
         user: data,
     });
 
 
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setContactData({
+    //         ...contactData,
+    //         [name]: value
+    //     });
+    // };
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
+    
+        // Check if the input type is checkbox
+        const inputValue = type === 'checkbox' ? checked : value;
+    
         setContactData({
             ...contactData,
-            [name]: value == "on" ? true : value
+            [name]: inputValue
         });
     };
 
@@ -170,7 +182,7 @@ function AddContact() {
 
                             {/* CheckBox */}
                             <div className="flex items-center mb-4">
-                                <input id="checkbox" type="checkbox" name='isFavourite' value={contactData.isFav} onChange={handleChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                <input id="checkbox" type="checkbox" name='fav' value={contactData.fav} onChange={handleChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                                 <label htmlFor="checkbox" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Mark as Favourite</label>
                             </div>
 

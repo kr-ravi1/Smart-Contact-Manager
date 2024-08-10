@@ -1,7 +1,6 @@
 package com.scm.controllers;
 
 import com.scm.dto.requests.AddNewContact;
-import com.scm.dto.response.ContactResponse;
 import com.scm.dto.response.MessageResponse;
 import com.scm.dto.response.MessageType;
 import com.scm.models.Contact;
@@ -33,17 +32,17 @@ public class ContactController {
     @PostMapping("/add")
     public ResponseEntity<?> addContact(@RequestBody AddNewContact addNewContact) {
 
-        if (contactService.existsByEmail(addNewContact.getEmail())) {
+        User user = userService.findByEmail(addNewContact.getUser().getEmail());
+
+        if (contactService.existsByEmail(addNewContact.getEmail(), user.getUserId())) {
             messageResponse = new MessageResponse("Contact with this Email already exists.", MessageType.warning);
             return new ResponseEntity<>(messageResponse, HttpStatus.OK);
         }
 
-        if (contactService.existsByPhoneNumber(addNewContact.getPhoneNumber())) {
+        if (contactService.existsByPhoneNumber(addNewContact.getPhoneNumber(), user.getUserId())) {
             messageResponse = new MessageResponse("Contact with this Phone Number already exists.", MessageType.warning);
             return new ResponseEntity<>(messageResponse, HttpStatus.OK);
         }
-
-        User user = userService.findByEmail(addNewContact.getUser().getEmail());
 
         Contact contact = new Contact();
         contact.setName(addNewContact.getName());
@@ -56,7 +55,10 @@ public class ContactController {
         contact.setWebsiteLink(addNewContact.getWebsiteLink());
         contact.setPicture("https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg");
         contact.setUser(user);
+        user.setContactsCounter(user.getContactsCounter()+1);
 
+        System.out.println(addNewContact.isFav());
+        userService.saveUser(user);
 //        System.out.println(addNewContact.isFav()); // getiing always false don't know why.
 
         contactService.saveContact(contact);
@@ -101,17 +103,42 @@ public class ContactController {
         return new ResponseEntity<>(contact, HttpStatus.OK);
     }
 
+    @GetMapping("/view/fav")
+    public List<Contact> viewFavContact(@RequestParam Long id) {
+        return contactService.getFavContacts(id);
+    }
+
     @GetMapping("/delete/{id}")
     public ResponseEntity<?> deleteContact(@PathVariable Long id) {
 
         if (!contactService.existsById(id)) {
-            messageResponse = new MessageResponse("Contact can not be Deleted", MessageType.warning);
+            MessageResponse messageResponse = new MessageResponse("Contact cannot be deleted", MessageType.warning);
             return new ResponseEntity<>(messageResponse, HttpStatus.OK);
         }
-        contactService.deleteById(id);
-        messageResponse = new MessageResponse("Contact Deleted Successfully", MessageType.success);
-        return new ResponseEntity<>(messageResponse,HttpStatus.OK);
+
+        Optional<Contact> contactOpt = contactService.findById(id);
+        if (!contactOpt.isPresent()) {
+            MessageResponse messageResponse = new MessageResponse("Contact not found", MessageType.warning);
+            return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+        }
+
+        Contact contact = contactOpt.get();
+        User user = userService.findByEmail(contact.getUser().getEmail());
+
+        if (user != null) {
+            contactService.deleteById(id);
+            if(user.getContactsCounter() > 0) {
+                user.setContactsCounter(user.getContactsCounter() - 1);
+            }
+            userService.saveUser(user);
+            MessageResponse messageResponse = new MessageResponse("Contact deleted successfully", MessageType.success);
+            return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+        } else {
+            MessageResponse messageResponse = new MessageResponse("User not found", MessageType.warning);
+            return new ResponseEntity<>(messageResponse, HttpStatus.BAD_REQUEST);
+        }
     }
+
 
     @PostMapping("/update/{id}")
     public ResponseEntity<?> updateContact(@PathVariable Long id, @RequestBody AddNewContact updateContact) {
@@ -133,9 +160,14 @@ public class ContactController {
     }
 
     @GetMapping("/recent_contacts")
-    public List<ContactResponse> getRecentlyAddedContacts(@RequestParam(defaultValue = "3") int limit,
+    public List<Contact> getRecentlyAddedContacts(@RequestParam(defaultValue = "3") int limit,
                                                           @RequestParam Long id) {
 
         return contactService.getRecentlyAddedContacts(id, limit);
+    }
+
+    @GetMapping("/countContacts")
+    public Long getCountOfContacts(@RequestParam String email) {
+        return userService.findByEmail(email).getContactsCounter();
     }
 }

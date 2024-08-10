@@ -18,7 +18,7 @@ public class AddNewContact {
     private String address;
     private MultipartFile contactImage;
     private String description;
-    private boolean isFav;
+    private boolean fav;
     private String websiteLink;
     private String linkedInLink;
     private User user;

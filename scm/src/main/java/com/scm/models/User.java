@@ -33,6 +33,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Providers provider = Providers.SELF;
     private String providerId;
+    private Long contactsCounter = 0L;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference

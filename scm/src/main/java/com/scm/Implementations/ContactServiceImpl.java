@@ -1,12 +1,10 @@
 package com.scm.Implementations;
 
 import com.scm.dao.ContactRepository;
-import com.scm.dto.response.ContactResponse;
 import com.scm.models.Contact;
 import com.scm.services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -25,14 +23,14 @@ public class ContactServiceImpl implements ContactService {
         return contactRepository.save(contact);
     }
 
-    public boolean existsByEmail(String email) {
-        Contact contact = contactRepository.findByEmail(email);
+    public boolean existsByEmail(String email, Long userId) {
+        Contact contact = contactRepository.findByEmail(email, userId);
         return contact != null ? true : false;
     }
 
     @Override
-    public boolean existsByPhoneNumber(String phoneNumber) {
-        Contact contact = contactRepository.findByPhoneNumber(phoneNumber);
+    public boolean existsByPhoneNumber(String phoneNumber, Long userId) {
+        Contact contact = contactRepository.findByPhoneNumber(phoneNumber, userId);
         return contact != null ? true : false;
     }
 
@@ -99,8 +97,19 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<ContactResponse> getRecentlyAddedContacts(Long id, int limit) {
+    public List<Contact> getRecentlyAddedContacts(Long id, int limit) {
         return contactRepository.findRecentlyAddedContacts(id, PageRequest.of(0, limit));
+    }
+
+    @Override
+    public List<Contact> getFavContacts(Long id) {
+        return contactRepository.findFavContacts(id);
+    }
+
+    @Override
+    public Optional<Contact> findById(Long id) {
+        Optional<Contact> contact = contactRepository.findById(id);
+        return contact;
     }
 
 }

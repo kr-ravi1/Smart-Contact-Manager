@@ -1,9 +1,6 @@
 package com.scm.dao;
 
-import com.scm.dto.response.ContactResponse;
 import com.scm.models.Contact;
-import com.scm.models.User;
-import jakarta.persistence.Id;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,9 +13,11 @@ import java.util.List;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Long> {
 
-    Contact findByEmail(String email);
+    @Query("SELECT c FROM Contact c JOIN c.user u WHERE u.id = :userId AND c.email = :email")
+    Contact findByEmail(@Param("email") String email, @Param("userId") Long userId);
 
-    Contact findByPhoneNumber(String phoneNumber);
+    @Query("SELECT c FROM Contact c JOIN c.user u WHERE u.id = :userId AND c.phoneNumber = :phoneNumber")
+    Contact findByPhoneNumber(@Param("phoneNumber") String phoneNumber, @Param("userId") Long userId);
 
     // Custom query Method
     @Query("SELECT c FROM Contact c WHERE c.user.id = :id")
@@ -33,6 +32,9 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
     @Query("SELECT c FROM Contact c JOIN c.user u WHERE u.id = :id AND c.phoneNumber LIKE %:phone%")
     Page<Contact> findByPhone(@Param("id") Long id, @Param("phone") String phone, Pageable pageable);
 
-    @Query("SELECT new com.scm.dto.response.ContactResponse(c.id, c.name, c.email, c.picture) FROM Contact c WHERE c.user.id = :userId ORDER BY c.createdAt DESC")
-    List<ContactResponse> findRecentlyAddedContacts(Long userId, Pageable pageable);
+    @Query("SELECT c FROM Contact c WHERE c.user.id = :userId ORDER BY c.createdAt DESC")
+    List<Contact> findRecentlyAddedContacts(Long userId, Pageable pageable);
+
+    @Query("SELECT c FROM Contact c WHERE c.user.id = :id AND c.fav = true")
+    List<Contact> findFavContacts(Long id);
 }

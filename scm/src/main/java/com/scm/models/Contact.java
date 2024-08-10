@@ -28,7 +28,7 @@ public class Contact {
     private String address;
     private String picture;
     private String description;
-    private boolean isFav;
+    private boolean fav;
     private String websiteLink;
     private String linkedInLink;
 

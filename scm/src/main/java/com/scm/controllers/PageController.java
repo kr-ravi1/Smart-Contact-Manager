@@ -73,6 +73,7 @@ public class PageController {
         userResponse.setEmail(user.getEmail());
         userResponse.setName(user.getName());
         userResponse.setPhoneNumber(user.getPhoneNumber());
+        userResponse.setContactsCounter(user.getContactsCounter());
 
         messageResponse = new MessageResponse("Login Successful", MessageType.success);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);

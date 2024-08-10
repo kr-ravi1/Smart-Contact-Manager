@@ -1,6 +1,5 @@
 package com.scm.services;
 
-import com.scm.dto.response.ContactResponse;
 import com.scm.models.Contact;
 import org.springframework.data.domain.Page;
 
@@ -11,9 +10,9 @@ public interface ContactService {
 
     Contact saveContact(Contact contact);
 
-    boolean existsByEmail(String email);
+    boolean existsByEmail(String email, Long userId);
 
-    boolean existsByPhoneNumber(String phoneNumber);
+    boolean existsByPhoneNumber(String phoneNumber, Long userId);
 
     Page<Contact> getByUserId(Long id, int page, int size, String sortField, String sortDirection);
 
@@ -31,5 +30,9 @@ public interface ContactService {
 
     Contact update(Contact contact);
 
-    public List<ContactResponse> getRecentlyAddedContacts(Long id, int limit);
+    public List<Contact> getRecentlyAddedContacts(Long id, int limit);
+
+    public List<Contact> getFavContacts(Long id);
+
+    Optional<Contact> findById(Long id);
 }
